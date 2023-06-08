@@ -8,5 +8,7 @@ public class Main {
         
         // Write your program here -- consider breaking the program into 
         // multiple classes.
+        UserInterface program = new UserInterface(scanner);
+        program.start();
     }
 }
