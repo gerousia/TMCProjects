@@ -1,6 +1,9 @@
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class MagicSquare {
 
@@ -15,17 +18,47 @@ public class MagicSquare {
         this.square = new int[size][size];
     }
 
+    public MagicSquare(int[][] square) {
+        this.square = square;
+    }
+
     // implement these three methods
     public ArrayList<Integer> sumsOfRows() {
-        return new ArrayList<>();
+        ArrayList<Integer> sumsOfRowsList = new ArrayList<>();
+
+        Arrays.stream(square).forEach(row -> sumsOfRowsList.add(Arrays.stream(row)
+                .reduce(Integer::sum)
+                .orElse(0)));
+
+        return sumsOfRowsList;
     }
 
     public ArrayList<Integer> sumsOfColumns() {
-        return new ArrayList<>();
+        ArrayList<Integer> sumsOfColumnsList = new ArrayList<>();
+
+        for (int i = 0; i < square[0].length; ++i) {
+            sumsOfColumnsList.add(0);
+        }
+
+        Arrays.stream(square).forEach(row -> IntStream.range(0, row.length)
+                .forEach(index -> sumsOfColumnsList.set(index, row[index] + sumsOfColumnsList.get(index))));
+
+        return sumsOfColumnsList;
     }
 
     public ArrayList<Integer> sumsOfDiagonals() {
-        return new ArrayList<>();
+        ArrayList<Integer> sumsOfDiagonalsList = new ArrayList<>();
+
+        for (int i = 0; i < 2; ++i) {
+            sumsOfDiagonalsList.add(0);
+        }
+
+        for (int i = 0; i < square.length; ++i) {
+            sumsOfDiagonalsList.set(0, sumsOfDiagonalsList.get(0) + square[i][i]);
+            sumsOfDiagonalsList.set(1, sumsOfDiagonalsList.get(1) + square[(square[i].length - 1) - i][i]);
+
+        }
+        return sumsOfDiagonalsList;
     }
 
     // ready-made helper methods -- don't touch these
