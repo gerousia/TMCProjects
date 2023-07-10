@@ -11,7 +11,7 @@ public class MagicSquareFactory {
         return bound;
     }
 
-    public MagicSquare createMagicSquare(int size) {
+    public MagicSquare createMagicSquare(int size) { ,m
         MagicSquare square = new MagicSquare(size);
 
         // implement the creation of a magic square with the Siamese method algorithm here
