@@ -1,6 +1,5 @@
 package application;
 
-import application.PartiesApplication;
 import fi.helsinki.cs.tmc.edutestutils.Points;
 import fi.helsinki.cs.tmc.edutestutils.Reflex;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class PartiesApplicationTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
-        PartiesApplication application = new PartiesApplication();
+        PartiesApplication application = new PartiesApplication(party);
 
         try {
             Application app = Application.class.cast(application);
