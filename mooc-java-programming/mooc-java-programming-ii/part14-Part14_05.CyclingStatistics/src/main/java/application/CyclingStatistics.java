@@ -17,15 +17,15 @@ public class CyclingStatistics {
 
     public CyclingStatistics(String file) {
         try {
-            rows = Files.lines(Paths.get(file)).collect(Collectors.toCollection(ArrayList::new));
+            this.rows = Files.lines(Paths.get(file)).collect(Collectors.toCollection(ArrayList::new)); // File Stream into ArrayList<String>
         } catch (IOException ex) {
             throw new RuntimeException("Failed to read the file " + file + ". Error message: " + ex.getMessage());
         }
     }
 
     public List<String> locations() {
-        List<String> locations = Arrays.stream(rows.get(0).split(";")).collect(Collectors.toList());
-        return locations.subList(1, locations.size());
+        List<String> locations = Arrays.stream(this.rows.get(0).split(";")).collect(Collectors.toList()); // Creates a list out of the String[] array using stream methods
+        return locations.subList(1, locations.size()); // Return sublist without the first item in the list
     }
 
     public Map<String, Integer> monthlyCyclists(String location) {
@@ -33,46 +33,36 @@ public class CyclingStatistics {
         if (locations.indexOf(location) < 0) {
             return new HashMap<>();
         }
-
         Map<String, List<Integer>> monthlyValues = new TreeMap<>();
-
         int index = locations.indexOf(location) + 1;
-        rows.stream().map(string -> string.split(";"))
+        this.rows.stream().map(string -> string.split(";"))
                 .filter(array -> array.length > 10)
                 .forEach(array -> {
                     String[] dateArray = array[0].split(" ");
                     if (dateArray.length < 3) {
                         return;
                     }
-
                     String month = dateArray[3] + " / " + stringToMonthNumber(dateArray[2]);
-
                     monthlyValues.putIfAbsent(month, new ArrayList<>());
-
                     int count = 0;
                     if (!array[index].isEmpty()) {
                         count = Integer.parseInt(array[index]);
                     }
-
                     monthlyValues.get(month).add(count);
                 });
-
         Map<String, Integer> cyclistCounts = new TreeMap<>();
         monthlyValues.keySet().stream().forEach(value -> {
             cyclistCounts.put(value, monthlyValues.get(value).stream().mapToInt(a -> a).sum());
         });
-
         return cyclistCounts;
     }
 
     private String stringToMonthNumber(String month) {
         List<String> months = Arrays.asList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
         int number = months.indexOf(month) + 1;
-
         if (number < 10) {
             return "0" + number;
         }
-
         return "" + number;
     }
 }

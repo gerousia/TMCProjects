@@ -16,45 +16,54 @@ public class CollageApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-
-        // the example opens the image, creates a new image, and copies the opened image
-        // into the new one, pixel by pixel
         Image sourceImage = new Image("file:monalisa.png");
-
         PixelReader imageReader = sourceImage.getPixelReader();
-
         int width = (int) sourceImage.getWidth();
         int height = (int) sourceImage.getHeight();
-
         WritableImage targetImage = new WritableImage(width, height);
         PixelWriter imageWriter = targetImage.getPixelWriter();
-
-        int yCoordinate = 0;
-        while (yCoordinate < height) {
-            int xCoordinate = 0;
-            while (xCoordinate < width) {
-
-                Color color = imageReader.getColor(xCoordinate, yCoordinate);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Color color = imageReader.getColor(j, i);
                 double red = color.getRed();
                 double green = color.getGreen();
                 double blue = color.getBlue();
                 double opacity = color.getOpacity();
-
                 Color newColor = new Color(red, green, blue, opacity);
-
-                imageWriter.setColor(xCoordinate, yCoordinate, newColor);
-
-                xCoordinate++;
+                imageWriter.setColor(j, i, newColor);
             }
-
-            yCoordinate++;
         }
 
-        ImageView image = new ImageView(targetImage);
+        for (int i = 0; i < height / 2; i++) {
+            for (int j = 0; j < width / 2; j++) {
+                Color color = imageReader.getColor(j * 2, i * 2);
+                imageWriter.setColor(j, i, color);
+            }
+        }
 
+        imageReader = targetImage.getPixelReader();
+        for (int i = 0; i < height / 2; i++) {
+            for (int j = 0; j < width / 2; j++) {
+                Color color = imageReader.getColor(j, i);
+                imageWriter.setColor(j + width / 2, i, color);
+                imageWriter.setColor(j, i + height / 2, color);
+                imageWriter.setColor(j + width / 2, i + height / 2, color);
+            }
+        }
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Color color = imageReader.getColor(j, i);
+                double r = 1 - color.getRed();
+                double g = 1 - color.getGreen();
+                double b = 1 - color.getBlue();
+                Color negative = new Color(r, g, b, color.getOpacity());
+                imageWriter.setColor(j, i, negative);
+            }
+        }
+        ImageView image = new ImageView(targetImage);
         Pane pane = new Pane();
         pane.getChildren().add(image);
-
         stage.setScene(new Scene(pane));
         stage.show();
     }
@@ -62,5 +71,4 @@ public class CollageApplication extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 }
